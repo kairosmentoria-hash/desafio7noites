@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desafio de 7 Noites | Elsa Limma</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f2f0fb;--surface:#fff;--ink:#241f4d;--muted:#5d5887;--line:#d9d5f0;--accent:#4a42b8;--accent-ink:#fff;--glow:#e0a92a;--dim:#c9c4ea}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14123a;--surface:#1e1b4d;--ink:#ece9ff;--muted:#a9a4d6;--line:#352f78;--accent:#a79df5;--accent-ink:#14123a;--glow:#f2cf6b;--dim:#4a4590}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14123a;--surface:#1e1b4d;--ink:#ece9ff;--muted:#a9a4d6;--line:#352f78;--accent:#a79df5;--accent-ink:#14123a;--glow:#f2cf6b;--dim:#4a4590}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 Nunito,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:28px 18px 48px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;line-height:1.2;margin:0}
+h1{font-size:2.3rem;margin:6px 0 10px}
+h2{font-size:1.5rem}
+h3{font-size:1.05rem;font-family:Nunito,system-ui,sans-serif;font-weight:700;margin:22px 0 6px}
+.brand{color:var(--muted);font-size:.95rem;margin:0}
+.lead{color:var(--muted);margin:0 0 22px}
+.moons{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 0 8px}
+.moon{background:none;border:2px solid transparent;border-radius:14px;padding:6px 0 4px;color:var(--muted);font:600 .72rem Nunito,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.moon svg{width:100%;max-width:38px;height:auto}
+.moon.sel{border-color:var(--accent);color:var(--ink)}
+.moon.done svg{filter:drop-shadow(0 0 6px var(--glow))}
+button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.prog{color:var(--muted);font-size:.9rem;margin:0 0 22px;text-align:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 20px;margin:0 0 18px}
+.card p{margin:8px 0}
+.sub{color:var(--muted);margin:6px 0 0}
+ol.steps{margin:8px 0;padding-left:22px}
+ol.steps li{margin:8px 0}
+.phrase{font-family:Fraunces,Georgia,serif;font-size:1.3rem;line-height:1.35;text-align:center;padding:18px 8px;margin:18px 0 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.field{display:block;margin:12px 0}
+.field span{display:block;font-weight:600;font-size:.92rem;margin-bottom:5px}
+input[type=time],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+textarea{min-height:92px;resize:vertical}
+.rate{display:flex;gap:6px}
+.rate button{flex:1;font:700 1rem Nunito,sans-serif;padding:10px 0;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.rate button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hint{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:3px}
+.main-btn{width:100%;margin-top:14px;padding:14px;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);font:700 1.02rem Nunito,sans-serif;cursor:pointer}
+.main-btn.undo{background:none;color:var(--muted);border:1px solid var(--line)}
+details.card summary{cursor:pointer;font:600 1.15rem Fraunces,Georgia,serif}
+.check{display:flex;gap:12px;align-items:flex-start;margin:12px 0;cursor:pointer}
+.check input{width:22px;height:22px;margin-top:3px;accent-color:var(--accent);flex:none}
+.small{font-size:.85rem;color:var(--muted)}
+.reset{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:.85rem;cursor:pointer;padding:8px 0}
+@media (prefers-reduced-motion:no-preference){.moon svg{transition:filter .4s}}
+</style>
+</head>
+<body>
+<main>
+<p class="brand">Elsa Limma | Hipnose para Dormir &amp; Bem-estar</p>
+<h1>Desafio de 7 Noites</h1>
+<p class="lead">Uma semana para criar o seu ritual de sono. Cada noite tem um tema, três passos simples e um diário curto. Toque em uma lua para começar.</p>
+
+<div class="moons" id="moons" role="tablist" aria-label="Noites do desafio"></div>
+<p class="prog" id="prog"></p>
+
+<section class="card" id="panel" aria-live="polite"></section>
+<section class="card" id="final" hidden></section>
+
+<details class="card" id="prep" open>
+<summary>Antes da primeira noite: preparar o ambiente</summary>
+<div id="checks"></div>
+</details>
+
+<p class="small">Este material é um apoio ao relaxamento e ao autocuidado. Não substitui acompanhamento médico ou psicológico. Não ouça sessões de hipnose enquanto dirige ou opera máquinas.</p>
+<button class="reset" id="reset">Recomeçar o desafio</button>
+</main>
+
+<script>
+const NIGHTS=[
+{t:"Chegar e desacelerar",d:"Hoje o objetivo é um só: avisar ao corpo que o dia acabou.",p:["Diminua as luzes da casa e deixe o quarto em penumbra.","Faça 5 respirações lentas: inspire contando até 4 e solte contando até 6.","Deite, deixe o celular longe do alcance e ouça uma sessão de hipnose do canal."],f:"Esta noite, eu posso descansar.",q:"O que está mais presente na minha mente agora?"},
+{t:"Soltar o dia",d:"Pensamentos soltos pesam mais no escuro. Hoje eles ganham um lugar no papel.",p:["Anote em um caderno 3 coisas que ficaram na sua cabeça hoje.","Feche o caderno e diga: “Isso fica guardado até amanhã.”","Deite e relaxe o corpo dos pés até a cabeça, uma parte de cada vez."],f:"O que não resolvi hoje pode esperar até amanhã.",q:"O que eu posso deixar para amanhã?"},
+{t:"Um corpo que pesa",d:"Muita gente guarda o dia nos ombros, no pescoço e na mandíbula. Hoje você vai soltar esses pontos.",p:["Gire os ombros 5 vezes para trás e incline o pescoço devagar para cada lado.","Solte a mandíbula: deixe os dentes sem se tocar e a língua relaxada.","Deite e sinta o peso do corpo no colchão enquanto ouve uma sessão."],f:"Meu corpo sabe descansar.",q:"Em que parte do corpo eu mais guardo tensão?"},
+{t:"O ritmo da respiração",d:"A respiração é o botão mais simples para acalmar o ritmo interno.",p:["Coloque uma mão no peito e outra na barriga.","Respire de modo que a mão da barriga suba mais do que a do peito, soltando o ar mais devagar do que puxou.","Se a mente fugir, volte para a contagem sem se cobrar."],f:"A cada expiração, eu me solto um pouco mais.",q:"Como estava minha respiração quando deitei?"},
+{t:"Acolher o dia",d:"Antes de dormir, vale notar o que foi bom e acolher o que foi difícil, sem precisar resolver nada.",p:["Pense em 3 coisas do dia que foram boas, mesmo pequenas.","Pense em uma emoção difícil e diga a si mesma(o): “Eu percebo você, e está tudo bem sentir.”","Respire fundo 3 vezes e deite com a mão no coração."],f:"Eu me trato com gentileza.",q:"O que me fez bem hoje?"},
+{t:"Soltar o que pesa",d:"Hoje você escreve uma carta de liberação, só para você. Ninguém precisa ler.",p:["Escreva algo que quer soltar: uma preocupação, uma mágoa, uma cobrança.","Termine com: “Eu escolho soltar isso, no meu tempo.”","Dobre o papel, guarde-o e ouça uma sessão deitada, de olhos fechados."],f:"Eu posso soltar o que pesa.",q:"O que eu escolho soltar?",n:"Se algo muito pesado aparecer, converse com um profissional de saúde mental. No Brasil, o CVV atende pelo 188, a qualquer hora."},
+{t:"O meu ritual",d:"Você testou seis noites. Agora monte a sua versão, só com o que funcionou.",p:["Olhe o seu diário e escolha 3 práticas que mais ajudaram.","Anote-as em um papel e deixe ao lado da cama.","Repita essas 3 práticas esta noite, do seu jeito, na ordem que preferir."],f:"Eu sei o caminho de volta ao descanso.",q:"Quais 3 práticas eu vou manter?"}
+];
+const PREP=["Deixe o quarto escuro ou em penumbra e com temperatura confortável.","Coloque o celular em modo “Não perturbe” e fora do alcance da mão.","Evite telas e notícias nos últimos 30 minutos antes de deitar.","Deixe um caderno e uma caneta ao lado da cama para o diário.","Se quiser, tome água ou um chá sem cafeína antes de começar.","Use o volume baixo e confortável, e nunca ouça enquanto dirige."];
+const FRAC=[.1,.25,.4,.55,.7,.85,1];
+const $=s=>document.querySelector(s);
+let S={sel:0,done:[],diary:{},prep:[]};
+try{const r=localStorage.getItem("desafio7");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem("desafio7",JSON.stringify(S))}catch(e){}};
+function moon(i){
+  const f=FRAC[i],rx=Math.abs(1-2*f)*20,done=!!S.done[i];
+  const lit=`M20 0A20 20 0 0 1 20 40A${rx} 20 0 0 ${f<.5?0:1} 20 0Z`;
+  return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--dim)" opacity=".55"/><path d="${lit}" fill="${done?"var(--glow)":"var(--accent)"}" opacity="${done?1:.5}"/></svg>`;
+}
+function renderMoons(){
+  $("#moons").innerHTML=NIGHTS.map((n,i)=>`<button class="moon${S.sel===i?" sel":""}${S.done[i]?" done":""}" role="tab" aria-selected="${S.sel===i}" data-i="${i}">${moon(i)}<span>Noite ${i+1}</span></button>`).join("");
+  const c=S.done.filter(Boolean).length;
+  $("#prog").textContent=c+" de 7 noites concluídas";
+  $("#final").hidden=c<7;
+  if(c===7)$("#final").innerHTML=`<h2>Você completou as 7 noites</h2><p>Releia o seu diário e perceba o que mudou no seu jeito de chegar à cama. O que funcionou para você agora é o seu ritual.</p><p>Quer continuar cuidando do seu sono e do seu bem-estar emocional? A trilha completa para membros tem novas sessões e encontros ao vivo. Procure o botão “Seja membro” no canal.</p>`;
+}
+function rate(key,v){return `<div class="rate" data-key="${key}">${[1,2,3,4,5].map(n=>`<button type="button" data-v="${n}" class="${v===n?"on":""}" aria-label="Nota ${n}">${n}</button>`).join("")}</div>`}
+function renderPanel(){
+  const i=S.sel,n=NIGHTS[i],d=S.diary[i]||{};
+  $("#panel").innerHTML=`<h2>Noite ${i+1}: ${n.t}</h2><p class="sub">${n.d}</p>
+  <h3>Seus 3 passos desta noite</h3><ol class="steps">${n.p.map(x=>`<li>${x}</li>`).join("")}</ol>
+  <p class="phrase">“${n.f}”</p>
+  <h3>Diário da noite ${i+1}</h3>
+  <label class="field"><span>Que horas eu deitei?</span><input type="time" data-k="hora" value="${d.hora||""}"></label>
+  <div class="field"><span>Como foi pegar no sono?</span>${rate("adormeci",d.adormeci)}<div class="hint"><span>Difícil</span><span>Tranquilo</span></div></div>
+  <div class="field"><span>Como acordei hoje?</span>${rate("acordei",d.acordei)}<div class="hint"><span>Cansada(o)</span><span>Descansada(o)</span></div></div>
+  <label class="field"><span>${n.q}</span><textarea data-k="nota">${(d.nota||"").replace(/</g,"&lt;")}</textarea></label>
+  ${n.n?`<p class="small">${n.n}</p>`:""}
+  <button class="main-btn${S.done[i]?" undo":""}" id="finish">${S.done[i]?"Noite concluída. Toque para desmarcar":"Concluir a noite "+(i+1)}</button>`;
+}
+function renderChecks(){
+  $("#checks").innerHTML=PREP.map((t,i)=>`<label class="check"><input type="checkbox" data-p="${i}" ${S.prep[i]?"checked":""}><span>${t}</span></label>`).join("");
+}
+document.addEventListener("click",e=>{
+  const m=e.target.closest(".moon");
+  if(m){S.sel=+m.dataset.i;save();renderMoons();renderPanel();$("#panel").scrollIntoView({block:"nearest"});return}
+  const r=e.target.closest(".rate button");
+  if(r){const k=r.parentNode.dataset.key;(S.diary[S.sel]=S.diary[S.sel]||{})[k]=+r.dataset.v;save();renderPanel();return}
+  if(e.target.id==="finish"){S.done[S.sel]=!S.done[S.sel];save();renderMoons();renderPanel();return}
+  if(e.target.id==="reset"){
+    if(e.target.dataset.ok){S={sel:0,done:[],diary:{},prep:[]};save();renderAll();e.target.textContent="Recomeçar o desafio";delete e.target.dataset.ok}
+    else{e.target.dataset.ok=1;e.target.textContent="Toque de novo para apagar tudo"}
+  }
+});
+document.addEventListener("input",e=>{
+  const k=e.target.dataset.k;
+  if(k){(S.diary[S.sel]=S.diary[S.sel]||{})[k]=e.target.value;save()}
+});
+document.addEventListener("change",e=>{
+  if(e.target.dataset.p!==undefined){S.prep[+e.target.dataset.p]=e.target.checked;save()}
+});
+function renderAll(){renderMoons();renderPanel();renderChecks()}
+renderAll();
+</script>
+</body>
+</html>
